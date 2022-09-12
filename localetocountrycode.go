@@ -1,6 +1,6 @@
 package libphonenumber
 
-LocaleByCountry = map[string][]string{
+var LocaleByCountry = map[string][]string{
 	"AE"  : {"ar"},
 	"AF"  : {"ps"},
 	"AL"  : {"sq"},
