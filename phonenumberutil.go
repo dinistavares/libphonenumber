@@ -1444,8 +1444,7 @@ func FormatOutOfCountryCallingNumber(
 func FormatInOriginalFormat(number *PhoneNumber, regionCallingFrom string) string {
 	rawInput := number.GetRawInput()
 	if len(rawInput) == 0 &&
-		(hasUnexpectedItalianLeadingZero(number) ||
-			!hasFormattingPatternForNumber(number)) {
+		(!hasFormattingPatternForNumber(number)) {
 		// We check if we have the formatting pattern because without that, we might format the number
 		// as a group without national prefix.
 		return rawInput
@@ -1560,14 +1559,6 @@ func rawInputContainsNationalPrefix(rawInput, nationalPrefix, regionCode string)
 
 	}
 	return false
-}
-
-// Returns true if a number is from a region whose national significant
-// number couldn't contain a leading zero, but has the italian_leading_zero
-// field set to true.
-func hasUnexpectedItalianLeadingZero(number *PhoneNumber) bool {
-	return number.GetItalianLeadingZero() &&
-		!isLeadingZeroPossible(int(number.GetCountryCode()))
 }
 
 func hasFormattingPatternForNumber(number *PhoneNumber) bool {
@@ -2309,17 +2300,6 @@ func GetNddPrefixForRegion(regionCode string, stripNonDigits bool) string {
 func IsNANPACountry(regionCode string) bool {
 	_, ok := readFromNanpaRegions(regionCode)
 	return ok
-}
-
-// Checks whether the country calling code is from a region whose national
-// significant number could contain a leading zero. An example of such a
-// region is Italy. Returns false if no metadata for the country is found.
-func isLeadingZeroPossible(countryCallingCode int) bool {
-	var mainMetadataForCallingCode *PhoneMetadata = getMetadataForRegionOrCallingCode(
-		countryCallingCode,
-		GetRegionCodeForCountryCode(countryCallingCode),
-	)
-	return mainMetadataForCallingCode.GetLeadingZeroPossible()
 }
 
 // Checks if the number is a valid vanity (alpha) number such as 800
